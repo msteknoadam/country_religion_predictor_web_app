@@ -3,10 +3,13 @@ declare global {
 		socket: SocketIOClient.Socket;
 		io: SocketIOClientStatic;
 		utils: any;
+		tf: any;
 	}
 }
 
 import * as io from "socket.io-client";
+import * as tf from "@tensorflow/tfjs";
+import { loadGraphModel } from "@tensorflow/tfjs-converter";
 import * as utils from "./utils";
 
 const socket = io("//" + window.location.host, {
@@ -15,6 +18,7 @@ const socket = io("//" + window.location.host, {
 window.socket = socket;
 window.io = io;
 window.utils = utils;
+window.tf = tf;
 
 socket.on("initialize", (data: string) => {
 	const uid = data.slice(7);
