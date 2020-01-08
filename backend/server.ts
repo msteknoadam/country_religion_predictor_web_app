@@ -59,13 +59,13 @@ app.get("*", (req, res) => {
 });
 
 io.on("connection", socket => {
-	if (!onlineSessions.includes(socket.request.id)) onlineSessions.push(socket.request.id);
+	if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
 
-	socket.emit("initialize", `Hello #${socket.request.id}`);
+	socket.emit("initialize", `Hello #${socket.id}`);
 	socket.emit("onlineCount", onlineSessions.length);
 
 	socket.on("disconnect", () => {
-		onlineSessions = onlineSessions.filter(val => val !== socket.request.id);
+		onlineSessions = onlineSessions.filter(val => val !== socket.id);
 	});
 });
 
