@@ -69,10 +69,6 @@ io.on("connection", socket => {
 	});
 });
 
-tf.loadLayersModel("https://ai.tekgo.pro/saved_web_model/model.json").then(model => {
-	console.log(model.summary());
-});
-
 server.listen(PORT, () => {
 	console.log(`Listening on *:${PORT}`);
 });
