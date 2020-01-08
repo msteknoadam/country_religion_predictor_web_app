@@ -1,0 +1,13 @@
+{
+	"name": "client",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.ts",
+	"scripts": {},
+	"author": "TEKNO",
+	"license": "MIT",
+	"dependencies": {
+		"@types/socket.io-client": "^1.4.32",
+		"socket.io-client": "^2.2.0"
+	}
+}
