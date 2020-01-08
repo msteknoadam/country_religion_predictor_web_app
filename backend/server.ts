@@ -4,7 +4,6 @@ import * as path from "path";
 import * as express from "express";
 import * as socketio from "socket.io";
 import * as http from "http";
-import * as path from "path";
 import * as fs from "fs";
 import * as utils from "./utils";
 import { createLogger, format, transports } from "winston";
