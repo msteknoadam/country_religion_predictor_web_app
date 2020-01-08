@@ -51,6 +51,7 @@ app.get("/node_modules*", (req, res) => {
 });
 
 app.get("*", (req, res) => {
+	console.log(req.path);
 	const filePath = path.join(__dirname, "..", "client", req.path);
 	fs.exists(filePath, exists => {
 		if (exists) res.sendFile(filePath);
