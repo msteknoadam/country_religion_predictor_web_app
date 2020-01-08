@@ -2,7 +2,7 @@ const path = require("path");
 
 module.exports = {
 	entry: {
-		"./client/index": path.resolve(__dirname, "client", "index.ts")
+		"./client/main": path.resolve(__dirname, "client", "main.ts")
 	},
 	mode: "production",
 	module: {
