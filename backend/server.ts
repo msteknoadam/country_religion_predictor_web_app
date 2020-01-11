@@ -58,9 +58,34 @@ const initializeServer = async () => {
 		});
 	});
 
-	const model = await tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json").catch(e => {
-		console.error(e);
+	server.listen(PORT, () => {
+		console.log(`Listening on *:${PORT}`);
 	});
+
+	let model: tf.GraphModel;
+
+	const loadModel = async () => {
+		tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json")
+			.then(downloadedModel => {
+				model = downloadedModel;
+			})
+			.catch(e => {
+				console.error(e);
+			});
+	};
+
+	/**
+	 * What a neat thing once again, I have to give location of the model as URL form, I can't
+	 * directly load it as file from my current directory so I need to wait 5 seconds and then
+	 * hope that server got up & running and can serve the model file so I can load it. At least
+	 * I made it kind of fail-safe because when a prediction is asked, it firsts check if the model
+	 * is loaded and if it's not, then it tries to load the model while asking the user to wait
+	 * for a few minutes and then try again later.
+	 */
+
+	utils.sleep(5000);
+
+	loadModel();
 
 	io.on("connection", socket => {
 		if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
@@ -69,6 +94,13 @@ const initializeServer = async () => {
 		socket.emit("onlineCount", onlineSessions.length);
 
 		socket.on("askPrediction", incomingData => {
+			if (typeof model === "undefined") {
+				loadModel();
+				socket.emit(
+					"clientError",
+					"Sorry but currently the server is not ready to predict at the moment. Please try again in a few minutes."
+				);
+			}
 			console.log(incomingData);
 			if (typeof incomingData !== "object" || incomingData.length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
@@ -103,10 +135,6 @@ const initializeServer = async () => {
 		socket.on("disconnect", () => {
 			onlineSessions = onlineSessions.filter(val => val !== socket.id);
 		});
-	});
-
-	server.listen(PORT, () => {
-		console.log(`Listening on *:${PORT}`);
 	});
 };
 

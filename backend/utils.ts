@@ -35,3 +35,10 @@ export const sendOpenSourcePage = (req: Request, res: Response) => {
 export const coloredConsoleLog = (text: string, color: colorTypes = "black") => {
 	console.log(`${colors[color]}${text}${colors.black}`);
 };
+
+/**
+ * @param {duration} "How long to sleep in milliseconds."
+ */
+export const sleep = (duration: number) => {
+	return new Promise(resolve => setTimeout(resolve, duration));
+};
