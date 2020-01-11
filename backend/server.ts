@@ -1,5 +1,4 @@
-import * as tf from "@tensorflow/tfjs";
-import { loadGraphModel } from "@tensorflow/tfjs-converter";
+import * as tf from "@tensorflow/tfjs-node";
 import * as path from "path";
 import * as express from "express";
 import * as socketio from "socket.io";
@@ -72,3 +71,29 @@ io.on("connection", socket => {
 server.listen(PORT, () => {
 	console.log(`Listening on *:${PORT}`);
 });
+
+const religionDict = ["Catholic", "Other Christian", "Muslim", "Buddhist", "Hindu", "Ethnic", "Marxist", "Others"];
+
+tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json")
+	.then(model => {
+		// @ts-ignore
+		let prediction: tf.Tensor = model.predict(tf.tensor([[3, 2, 0, 2, 0, 0, 0, 0]]));
+		/**
+		 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
+		 * in the prediction declaration is because the defined typed for model.predict output
+		 * is Tensor<Rank> and that limits my usage because I can't access Tensor functions
+		 * since I'm using TypeScript.), I need to write my own way to find the index of maximum
+		 * value in prediction list so I can get the prediction from religionDict array.
+		 */
+		let maxValueIndex = 0;
+		const predictionArray = prediction.dataSync();
+		predictionArray.forEach((value: number, index: number) => {
+			if (value > predictionArray[maxValueIndex]) {
+				maxValueIndex = index;
+			}
+		});
+		console.log(`Model prediction is type ${maxValueIndex} which is ${religionDict[maxValueIndex]}`);
+	})
+	.catch(e => {
+		console.error(e);
+	});
