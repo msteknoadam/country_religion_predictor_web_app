@@ -109,3 +109,6 @@ const initializeServer = async () => {
 		console.log(`Listening on *:${PORT}`);
 	});
 };
+
+console.log("Starting to initialize server.");
+initializeServer();
