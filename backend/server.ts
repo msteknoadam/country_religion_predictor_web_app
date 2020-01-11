@@ -97,14 +97,15 @@ const initializeServer = async () => {
 		socket.emit("onlineCount", onlineSessions.length);
 
 		socket.on("askPrediction", incomingData => {
+			console.log(`Prediction request: ${incomingData}`);
 			if (typeof model === "undefined") {
 				loadModel();
 				socket.emit(
 					"clientError",
 					"Sorry but currently the server is not ready to predict at the moment. Please try again in a few minutes."
 				);
+				return;
 			}
-			console.log(incomingData);
 			if (typeof incomingData !== "object" || incomingData.length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
 				return;
