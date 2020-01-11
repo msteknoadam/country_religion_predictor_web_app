@@ -59,7 +59,18 @@ const initializeServer = async () => {
 	});
 
 	server.listen(PORT, () => {
-		console.log(`Listening on *:${PORT}`);
+		console.log(`Started listening on *:${PORT}`);
+
+		/**
+		 * What a neat thing once again, I have to give location of the model as URL form, I can't
+		 * directly load it as file from my current directory so I need to wait 10 seconds and then
+		 * hope that server got up & running and can serve the model file so I can load it. At least
+		 * I made it kind of fail-safe because when a prediction is asked, it firsts check if the model
+		 * is loaded and if it's not, then it tries to load the model while asking the user to wait
+		 * for a few minutes and then try again later.
+		 */
+
+		utils.sleep(10000);
 	});
 
 	let model: tf.GraphModel;
@@ -73,17 +84,6 @@ const initializeServer = async () => {
 				console.error(e);
 			});
 	};
-
-	/**
-	 * What a neat thing once again, I have to give location of the model as URL form, I can't
-	 * directly load it as file from my current directory so I need to wait 5 seconds and then
-	 * hope that server got up & running and can serve the model file so I can load it. At least
-	 * I made it kind of fail-safe because when a prediction is asked, it firsts check if the model
-	 * is loaded and if it's not, then it tries to load the model while asking the user to wait
-	 * for a few minutes and then try again later.
-	 */
-
-	utils.sleep(5000);
 
 	loadModel();
 

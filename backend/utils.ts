@@ -40,5 +40,9 @@ export const coloredConsoleLog = (text: string, color: colorTypes = "black") => 
  * @param {duration} "How long to sleep in milliseconds."
  */
 export const sleep = (duration: number) => {
-	return new Promise(resolve => setTimeout(resolve, duration));
+	return new Promise(resolve => {
+		setTimeout(() => {
+			resolve();
+		}, duration);
+	});
 };
