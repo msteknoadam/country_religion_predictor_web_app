@@ -6,8 +6,6 @@ import * as http from "http";
 import * as fs from "fs";
 import * as utils from "./utils";
 import { createLogger, format, transports } from "winston";
-// @ts-ignore
-process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 const PORT = 3001;
 const logger = createLogger({
 	level: "info",
@@ -50,6 +48,10 @@ const initializeServer = async () => {
 
 	app.get("/node_modules*", (req, res) => {
 		utils.sendOpenSourcePage(req, res);
+	});
+
+	app.get("/", (req, res) => {
+		res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 	});
 
 	app.get("*", (req, res) => {

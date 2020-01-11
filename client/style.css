@@ -29,6 +29,33 @@ body {
 	background-color: white;
 }
 
+.askPredictionBox,
+.predictionResultBox {
+	width: 30%;
+	height: 80%;
+	position: absolute;
+	border: black solid 2px;
+	border-radius: 2.5%;
+	overflow: hidden;
+	margin: 20px 10px;
+}
+
+.askPredictionBox {
+	right: 50%;
+}
+
+.predictionResultBox {
+	left: 50%;
+}
+
+.askPredictionBox table {
+	height: 100%;
+}
+
+table.disabled {
+	pointer-events: none;
+}
+
 @media (max-width: 1200px) {
 	.onlineHolder {
 		display: none;

@@ -9,7 +9,86 @@
 	</head>
 	<body>
 		<div class="onlineHolder">Currently Online: <span class="onlineCount">0</span></div>
-		<div class="initializeMessage"></div>
+		<div class="initializeMessage">
+			Currently trying to connect to server. Buttons & Text inputs will be actived as the connection between
+			server is established.
+		</div>
+		<div class="askPredictionBox">
+			<table border="1" rules="rows" class="disabled">
+				<tr>
+					<th>Question</th>
+					<th>Answer</th>
+				</tr>
+				<tr>
+					<td>
+						<span
+							>In which geographic quadrant (based on Greenwich and the Equator) is that country? (Enter 1
+							for North-East, 2 for South-East, 3 for South-West and 4 for North-West)</span
+						>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span
+							>What language is being spoken in that country? (1=English, 2=Spanish, 3=French, 4=German,
+							5=Slavic, 6=Other Indo-European, 7=Chinese, 8=Arabic, 9=Japanese/Turkish/Finnish/Magyar,
+							10=Others)</span
+						>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td><span>How many stripes are there in that country's flag?</span></td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span>How many DIFFERENT colours are there in that country's flag?</span>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span>How many suns or stars are there in that country's flag?</span>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span
+							>Are there any kind of inanimate images (e.g., a boat) on that country's flag? (Type 1 for
+							yes, 0 for no)</span
+						>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span
+							>Are there any kind of animate images (e.g., an eagle, a tree, a human hand) on that
+							country's flag? (Type 1 for yes, 0 for no)</span
+						>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td>
+						<span
+							>Are there any letters or writing on the flag (e.g., a motto or slogan) on that country's
+							flag? (Type 1 for yes, 0 for no)</span
+						>
+					</td>
+					<td><input /></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<button class="askPrediction">Ask for prediction from the server</button>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="predictionResultBox"></div>
 		<div class="footer">
 			Made with <img src="./heart_emoji.svg" width="15px" /> by
 			<a href="https://github.com/msteknoadam" style="font-weight: bold">TEKNO</a><br />This is an

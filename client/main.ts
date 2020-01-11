@@ -218,6 +218,25 @@ window.utils = utils;
 socket.on("initialize", (data: string) => {
 	const uid = data.slice(7);
 	(<HTMLDivElement>document.body.querySelector(".initializeMessage")).innerHTML = `${data}<br />`;
+	(<HTMLTableElement>document.body.querySelector(".askPredictionBox table.disabled")).setAttribute("class", "");
+	const sendButton = <HTMLButtonElement>document.body.querySelector(".askPredictionBox button.askPrediction");
+	sendButton.addEventListener("click", event => {
+		event.preventDefault();
+		const inputValues: Array<number> = [];
+		const inputs = document.body.querySelectorAll(".askPredictionBox input");
+		inputs.forEach((el: HTMLInputElement) => {
+			const inputValue = Number(el.value);
+			if (isNaN(inputValue)) {
+				return;
+			}
+			inputValues.push(inputValue);
+		});
+		if (inputValues.length !== 8) {
+			utils.error(`Error! Your input is not in a correct type. Please try again.`);
+			return;
+		}
+		socket.emit("askPrediction", inputValues);
+	});
 });
 
 socket.on("clientError", (error: string) => {
@@ -229,5 +248,5 @@ socket.on("onlineCount", (onlineCount: number) => {
 });
 
 socket.on("predictionResult", (result: number) => {
-	console.log(result);
+	console.log(`Got prediction result from the server: ${result}`);
 });
