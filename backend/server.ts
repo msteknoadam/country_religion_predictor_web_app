@@ -62,6 +62,7 @@ const initializeServer = async () => {
 
 	server.listen(PORT, async () => {
 		console.log(`Started listening on *:${PORT}`);
+		logger.info(`Started listening on *:${PORT}`);
 	});
 
 	/**
@@ -82,9 +83,11 @@ const initializeServer = async () => {
 			.then(downloadedModel => {
 				model = downloadedModel;
 				console.log("Model successfully loaded.");
+				logger.info("Model successfully loaded.");
 			})
 			.catch(e => {
 				console.error(e);
+				logger.error(e);
 			});
 	};
 
@@ -97,22 +100,28 @@ const initializeServer = async () => {
 		socket.emit("onlineCount", onlineSessions.length);
 
 		socket.on("askPrediction", incomingData => {
-			console.log(`Prediction request: ${incomingData}`);
 			if (typeof model === "undefined") {
 				loadModel();
 				socket.emit(
 					"clientError",
 					"Sorry but currently the server is not ready to predict at the moment. Please try again in a few minutes."
 				);
+				logger.warning(
+					`Got a prediction request while the model is not loaded yet. Request war -> ${JSON.stringify(
+						incomingData
+					)}`
+				);
 				return;
 			}
 			if (typeof incomingData !== "object" || incomingData.length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
+				logger.warning(`Malformed input -> ${JSON.stringify(incomingData)}`);
 				return;
 			}
 			const testData: Array<any> = incomingData;
 			if (testData.filter(val => typeof val === "number").length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
+				logger.warning(`Malformed input -> ${JSON.stringify(testData)}`);
 				return;
 			}
 			const dataArray: Array<number> = testData;
@@ -133,6 +142,9 @@ const initializeServer = async () => {
 				}
 			});
 			socket.emit("predictionResult", maxValueIndex);
+			logger.info(
+				`Sent prediction result as ${maxValueIndex} for prediction request ${JSON.stringify(dataArray)}.`
+			);
 			return;
 		});
 
@@ -143,4 +155,5 @@ const initializeServer = async () => {
 };
 
 console.log("Starting to initialize server.");
+logger.info("Starting to initialize server.");
 initializeServer();
