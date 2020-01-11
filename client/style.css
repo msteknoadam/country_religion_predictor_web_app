@@ -46,6 +46,7 @@ body {
 
 .predictionResultBox {
 	left: 50%;
+	overflow: scroll;
 }
 
 .askPredictionBox table {
