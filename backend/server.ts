@@ -31,69 +31,81 @@ const logger = createLogger({
 	]
 });
 
-const app = express();
-const server = http.createServer(app);
-const io = socketio(server);
-let onlineSessions: string[] = [];
+const initializeServer = async () => {
+	const app = express();
+	const server = http.createServer(app);
+	const io = socketio(server);
+	let onlineSessions: string[] = [];
 
-setInterval(() => {
-	logger.info(`Stats: Current online count: ${onlineSessions.length}`);
-	io.emit("onlineCount", onlineSessions.length);
-}, 60e3);
+	setInterval(() => {
+		logger.info(`Stats: Current online count: ${onlineSessions.length}`);
+		io.emit("onlineCount", onlineSessions.length);
+	}, 60e3);
 
-app.get("*.ts", (req, res) => {
-	utils.sendOpenSourcePage(req, res);
-});
-
-app.get("/node_modules*", (req, res) => {
-	utils.sendOpenSourcePage(req, res);
-});
-
-app.get("*", (req, res) => {
-	const filePath = path.join(__dirname, "..", "client", req.path);
-	fs.exists(filePath, exists => {
-		if (exists) res.sendFile(filePath);
-		else utils.error404(req, res);
+	app.get("*.ts", (req, res) => {
+		utils.sendOpenSourcePage(req, res);
 	});
-});
 
-io.on("connection", socket => {
-	if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
-
-	socket.emit("initialize", `Hello #${socket.id}`);
-	socket.emit("onlineCount", onlineSessions.length);
-
-	socket.on("disconnect", () => {
-		onlineSessions = onlineSessions.filter(val => val !== socket.id);
+	app.get("/node_modules*", (req, res) => {
+		utils.sendOpenSourcePage(req, res);
 	});
-});
 
-server.listen(PORT, () => {
-	console.log(`Listening on *:${PORT}`);
-});
-
-const religionDict = ["Catholic", "Other Christian", "Muslim", "Buddhist", "Hindu", "Ethnic", "Marxist", "Others"];
-
-tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json")
-	.then(model => {
-		// @ts-ignore
-		let prediction: tf.Tensor = model.predict(tf.tensor([[3, 2, 0, 2, 0, 0, 0, 0]]));
-		/**
-		 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
-		 * in the prediction declaration is because the defined typed for model.predict output
-		 * is Tensor<Rank> and that limits my usage because I can't access Tensor functions
-		 * since I'm using TypeScript.), I need to write my own way to find the index of maximum
-		 * value in prediction list so I can get the prediction from religionDict array.
-		 */
-		let maxValueIndex = 0;
-		const predictionArray = prediction.dataSync();
-		predictionArray.forEach((value: number, index: number) => {
-			if (value > predictionArray[maxValueIndex]) {
-				maxValueIndex = index;
-			}
+	app.get("*", (req, res) => {
+		const filePath = path.join(__dirname, "..", "client", req.path);
+		fs.exists(filePath, exists => {
+			if (exists) res.sendFile(filePath);
+			else utils.error404(req, res);
 		});
-		console.log(`Model prediction is type ${maxValueIndex} which is ${religionDict[maxValueIndex]}`);
-	})
-	.catch(e => {
+	});
+
+	const model = await tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json").catch(e => {
 		console.error(e);
 	});
+
+	io.on("connection", socket => {
+		if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
+
+		socket.emit("initialize", `Hello #${socket.id}`);
+		socket.emit("onlineCount", onlineSessions.length);
+
+		socket.on("askPrediction", incomingData => {
+			console.log(incomingData);
+			if (typeof incomingData !== "object" || incomingData.length !== 8) {
+				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
+				return;
+			}
+			const testData: Array<any> = incomingData;
+			if (testData.filter(val => typeof val === "number").length !== 8) {
+				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
+				return;
+			}
+			const dataArray: Array<number> = testData;
+			// @ts-ignore
+			const prediction: tf.Tensor = model.predict(tf.tensor([dataArray]));
+			/**
+			 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
+			 * in the prediction declaration is because the defined typed for model.predict output
+			 * is Tensor<Rank> and that limits my usage because I can't access Tensor functions
+			 * since I'm using TypeScript.), I need to write my own way to find the index of maximum
+			 * value in prediction list so I can get the prediction from religionDict array.
+			 */
+			let maxValueIndex = 0;
+			const predictionArray = prediction.dataSync();
+			predictionArray.forEach((value: number, index: number) => {
+				if (value > predictionArray[maxValueIndex]) {
+					maxValueIndex = index;
+				}
+			});
+			socket.emit("predictionResult", maxValueIndex);
+			return;
+		});
+
+		socket.on("disconnect", () => {
+			onlineSessions = onlineSessions.filter(val => val !== socket.id);
+		});
+	});
+
+	server.listen(PORT, () => {
+		console.log(`Listening on *:${PORT}`);
+	});
+};
