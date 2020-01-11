@@ -225,6 +225,7 @@ socket.on("initialize", (data: string) => {
 		const inputValues: Array<number> = [];
 		const inputs = document.body.querySelectorAll(".askPredictionBox input");
 		inputs.forEach((el: HTMLInputElement) => {
+			if (el.value === "") return;
 			const inputValue = Number(el.value);
 			if (isNaN(inputValue)) {
 				return;
@@ -249,4 +250,10 @@ socket.on("onlineCount", (onlineCount: number) => {
 
 socket.on("predictionResult", (result: number) => {
 	console.log(`Got prediction result from the server: ${result}`);
+	(<HTMLSpanElement>(
+		document.body.querySelector(".predictionResultBox .resultText")
+	)).innerHTML = `Model predicts that country's religion is: ${religionDict[result][0]}
+	<br />
+	<br />
+	Based on this, that country might be one of these: <br />${religionDict[result].splice(1).join("<br />")}`;
 });
