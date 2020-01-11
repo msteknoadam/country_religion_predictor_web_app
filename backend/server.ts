@@ -78,7 +78,7 @@ const initializeServer = async () => {
 	let model: tf.GraphModel;
 
 	const loadModel = async () => {
-		tf.loadGraphModel("https://ai.tekgo.pro/saved_web_model/model.json")
+		tf.loadGraphModel(`http://localhost:${PORT}/saved_web_model/model.json`)
 			.then(downloadedModel => {
 				model = downloadedModel;
 				console.log("Model successfully loaded.");
