@@ -38,7 +38,6 @@ const initializeServer = async () => {
 	let onlineSessions: string[] = [];
 
 	setInterval(() => {
-		logger.info(`Stats: Current online count: ${onlineSessions.length}`);
 		io.emit("onlineCount", onlineSessions.length);
 	}, 60e3);
 
