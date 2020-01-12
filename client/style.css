@@ -38,6 +38,7 @@ body {
 	border-radius: 2.5%;
 	overflow: hidden;
 	margin: 20px 10px;
+	overflow: scroll;
 }
 
 .askPredictionBox {
@@ -46,7 +47,6 @@ body {
 
 .predictionResultBox {
 	left: 50%;
-	overflow: scroll;
 }
 
 .askPredictionBox table {
@@ -63,5 +63,13 @@ table.disabled {
 	}
 	.footer {
 		display: none;
+	}
+	.askPredictionBox,
+	.predictionResultBox {
+		position: relative;
+		margin: 20px auto;
+		right: initial;
+		left: initial;
+		width: 80%;
 	}
 }
