@@ -6,7 +6,7 @@
 		"dev:frontend": "webpack --config ./webpack.frontend.config.dev.js --watch",
 		"start:backend": "node_modules/.bin/ts-node -- ./backend/server.ts",
 		"start:frontend": "webpack --config ./webpack.frontend.config.prod.js",
-		"start": "start:frontend && start:backend"
+		"start": "npm run start:frontend && npm run start:backend"
 	},
 	"dependencies": {
 		"@tensorflow/tfjs-node": "1.5.1",
