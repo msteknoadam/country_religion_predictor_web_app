@@ -5,31 +5,7 @@ import * as socketio from "socket.io";
 import * as http from "http";
 import * as fs from "fs";
 import * as utils from "./utils";
-import { createLogger, format, transports } from "winston";
 const PORT = process.env.PORT || 3001;
-const logger = createLogger({
-	level: "info",
-	format: format.combine(
-		format.timestamp({
-			format: "YYYY-MM-DD HH:mm:ss",
-		}),
-		format.errors({ stack: true }),
-		format.splat(),
-		format.json()
-	),
-	defaultMeta: { service: "AI-ContryReligionPredictor" },
-	transports: [
-		//
-		// - Write to all logs with level `info` and below to `quick-start-combined.log`.
-		// - Write all logs error (and below) to `quick-start-error.log`.
-		//
-		new transports.File({
-			filename: "logs/ai-countryreligionpredictor-error.log",
-			level: "error",
-		}),
-		new transports.File({ filename: "logs/ai-countryreligionpredictor-combined.log" }),
-	],
-});
 
 const initializeServer = async () => {
 	const app = express();
@@ -63,7 +39,6 @@ const initializeServer = async () => {
 
 	server.listen(PORT, async () => {
 		console.log(`Started listening on *:${PORT}`);
-		logger.info(`Started listening on *:${PORT}`);
 	});
 
 	/**
@@ -84,11 +59,9 @@ const initializeServer = async () => {
 			.then((downloadedModel) => {
 				model = downloadedModel;
 				console.log("Model successfully loaded.");
-				logger.info("Model successfully loaded.");
 			})
 			.catch((e) => {
 				console.error(e);
-				logger.error(e);
 			});
 	};
 
@@ -107,8 +80,8 @@ const initializeServer = async () => {
 					"clientError",
 					"Sorry but currently the server is not ready to predict at the moment. Please try again in a few minutes."
 				);
-				logger.warning(
-					`Got a prediction request while the model is not loaded yet. Request war -> ${JSON.stringify(
+				console.warn(
+					`Got a prediction request while the model is not loaded yet. Request was -> ${JSON.stringify(
 						incomingData
 					)}`
 				);
@@ -116,13 +89,13 @@ const initializeServer = async () => {
 			}
 			if (typeof incomingData !== "object" || incomingData.length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
-				logger.warning(`Malformed input -> ${JSON.stringify(incomingData)}`);
+				console.warn(`Malformed input -> ${JSON.stringify(incomingData)}`);
 				return;
 			}
 			const testData: Array<any> = incomingData;
 			if (testData.filter((val) => typeof val === "number").length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
-				logger.warning(`Malformed input -> ${JSON.stringify(testData)}`);
+				console.warn(`Malformed input -> ${JSON.stringify(testData)}`);
 				return;
 			}
 			const dataArray: Array<number> = testData;
@@ -143,7 +116,7 @@ const initializeServer = async () => {
 				}
 			});
 			socket.emit("predictionResult", maxValueIndex);
-			logger.info(
+			console.info(
 				`Sent prediction result as ${maxValueIndex} for prediction request ${JSON.stringify(dataArray)}.`
 			);
 			return;
@@ -156,5 +129,4 @@ const initializeServer = async () => {
 };
 
 console.log("Starting to initialize server.");
-logger.info("Starting to initialize server.");
 initializeServer();
