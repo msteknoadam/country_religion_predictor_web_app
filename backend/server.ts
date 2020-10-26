@@ -150,7 +150,7 @@ const initializeServer = async () => {
 		});
 
 		socket.on("disconnect", () => {
-			onlineSessions = onlineSessions.filter((val) => val !== socket.id);
+			delete onlineSessions[socket.id];
 		});
 	});
 };
