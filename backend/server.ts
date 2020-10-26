@@ -11,7 +11,7 @@ const logger = createLogger({
 	level: "info",
 	format: format.combine(
 		format.timestamp({
-			format: "YYYY-MM-DD HH:mm:ss"
+			format: "YYYY-MM-DD HH:mm:ss",
 		}),
 		format.errors({ stack: true }),
 		format.splat(),
@@ -25,10 +25,10 @@ const logger = createLogger({
 		//
 		new transports.File({
 			filename: "logs/ai-countryreligionpredictor-error.log",
-			level: "error"
+			level: "error",
 		}),
-		new transports.File({ filename: "logs/ai-countryreligionpredictor-combined.log" })
-	]
+		new transports.File({ filename: "logs/ai-countryreligionpredictor-combined.log" }),
+	],
 });
 
 const initializeServer = async () => {
@@ -55,7 +55,7 @@ const initializeServer = async () => {
 
 	app.get("*", (req, res) => {
 		const filePath = path.join(__dirname, "..", "client", req.path);
-		fs.exists(filePath, exists => {
+		fs.exists(filePath, (exists) => {
 			if (exists) res.sendFile(filePath);
 			else utils.error404(req, res);
 		});
@@ -81,12 +81,12 @@ const initializeServer = async () => {
 
 	const loadModel = async () => {
 		tf.loadGraphModel(`http://localhost:${PORT}/saved_web_model/model.json`)
-			.then(downloadedModel => {
+			.then((downloadedModel) => {
 				model = downloadedModel;
 				console.log("Model successfully loaded.");
 				logger.info("Model successfully loaded.");
 			})
-			.catch(e => {
+			.catch((e) => {
 				console.error(e);
 				logger.error(e);
 			});
@@ -94,13 +94,13 @@ const initializeServer = async () => {
 
 	loadModel();
 
-	io.on("connection", socket => {
+	io.on("connection", (socket) => {
 		if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
 
 		socket.emit("initialize", `Hello #${socket.id}`);
 		socket.emit("onlineCount", onlineSessions.length);
 
-		socket.on("askPrediction", incomingData => {
+		socket.on("askPrediction", (incomingData) => {
 			if (typeof model === "undefined") {
 				loadModel();
 				socket.emit(
@@ -120,7 +120,7 @@ const initializeServer = async () => {
 				return;
 			}
 			const testData: Array<any> = incomingData;
-			if (testData.filter(val => typeof val === "number").length !== 8) {
+			if (testData.filter((val) => typeof val === "number").length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
 				logger.warning(`Malformed input -> ${JSON.stringify(testData)}`);
 				return;
@@ -150,7 +150,7 @@ const initializeServer = async () => {
 		});
 
 		socket.on("disconnect", () => {
-			onlineSessions = onlineSessions.filter(val => val !== socket.id);
+			onlineSessions = onlineSessions.filter((val) => val !== socket.id);
 		});
 	});
 };
