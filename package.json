@@ -1,6 +1,6 @@
 {
 	"scripts": {
-		"install": "npm rebuild @tensorflow/tfjs-node build-addon-from-source && cd client && yarn",
+		"install": "cd client && yarn",
 		"dev:backend": "nodemon --ignore client/ --exec node_modules/.bin/ts-node -- ./backend/server.ts",
 		"dev:frontend": "webpack --config ./webpack.frontend.config.dev.js --watch",
 		"start:backend": "node_modules/.bin/ts-node -- ./backend/server.ts",
