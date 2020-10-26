@@ -1,6 +1,6 @@
 # Try It Out Online
 
-You can try this application online on https://ai.tekno.icu
+You can try this application online on https://ai.goktug.dev
 
 # Country Religion Predictor Web App
 
