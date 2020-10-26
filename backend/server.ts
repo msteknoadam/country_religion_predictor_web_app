@@ -6,7 +6,7 @@ import * as http from "http";
 import * as fs from "fs";
 import * as utils from "./utils";
 import { createLogger, format, transports } from "winston";
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 const logger = createLogger({
 	level: "info",
 	format: format.combine(
