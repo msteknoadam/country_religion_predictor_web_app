@@ -1,6 +1,5 @@
 {
 	"scripts": {
-		"install": "npm i node-pre-gyp -g && npm rebuild @tensorflow/tfjs-node --build-from-source && cd client && yarn",
 		"dev:backend": "nodemon --ignore client/ --exec node_modules/.bin/ts-node -- ./backend/server.ts",
 		"dev:frontend": "webpack --config ./webpack.frontend.config.dev.ts --watch",
 		"start:backend": "node_modules/.bin/ts-node -- ./backend/server.ts",
