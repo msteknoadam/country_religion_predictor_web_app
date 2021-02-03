@@ -14,17 +14,17 @@ socket.on("initialize", (data: string) => {
 		event.preventDefault();
 		const inputValues: Array<number> = [];
 		const inputs = document.body.querySelectorAll(".askPredictionBox input");
-		inputs.forEach((el: HTMLInputElement) => {
-			if (el.value === "") return;
-			const inputValue = Number(el.value);
+		inputs.forEach((el) => {
+			const element = el as HTMLInputElement;
+			if (element.value === "") return;
+			const inputValue = Number(element.value);
 			if (isNaN(inputValue)) {
 				return;
 			}
 			inputValues.push(inputValue);
 		});
 		if (inputValues.length !== 8) {
-			utils.error("Error! Your input is not in a correct type. Please try again.");
-			return;
+			return utils.error("Error! Your input is not in a correct type. Please try again.");
 		}
 		socket.emit("askPrediction", inputValues);
 	});

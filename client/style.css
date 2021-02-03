@@ -57,6 +57,21 @@ table.disabled {
 	pointer-events: none;
 }
 
+div.errorBox {
+	z-index: 1;
+	width: "50%";
+	height: "10%";
+	position: "absolute";
+	top: "10px";
+	left: "50%";
+	transform: "translateX(-50%)";
+	border: "2px black solid";
+	border-radius: "4px";
+	background: "#FFFFFF";
+	font-size: "30px";
+	text-align: "center";
+}
+
 @media (max-width: 1200px) {
 	.onlineHolder {
 		display: none;

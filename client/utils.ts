@@ -23,29 +23,18 @@ export const getCookie = (cname: string): string => {
 
 export const error = (error: string): void => {
 	let errorBox = document.createElement("div");
-	errorBox.style.zIndex = "1";
-	errorBox.style.width = "50%";
-	errorBox.style.height = "10%";
-	errorBox.style.position = "absolute";
-	errorBox.style.top = "10px";
-	errorBox.style.left = "50%";
-	errorBox.style.transform = "translateX(-50%)";
-	errorBox.style.border = "2px black solid";
-	errorBox.style.borderRadius = "4px";
-	errorBox.style.background = "#FFFFFF";
-	errorBox.style.fontSize = "30px";
-	errorBox.style.textAlign = "center";
+	errorBox.className = "errorBox";
 	errorBox.innerText = error;
 	errorBox.onclick = () => {
-		if (errorBox) {
+		if (errorBox && errorBox.parentElement) {
 			errorBox.parentElement.removeChild(errorBox);
-			errorBox = undefined;
+			errorBox = null;
 		}
 	};
 	setTimeout(() => {
-		if (errorBox) {
+		if (errorBox && errorBox.parentElement) {
 			errorBox.parentElement.removeChild(errorBox);
-			errorBox = undefined;
+			errorBox = null;
 		}
 	}, 10e3);
 	document.body.appendChild(errorBox);

@@ -1,6 +1,6 @@
 import * as tf from "@tensorflow/tfjs-node";
 import * as path from "path";
-import * as express from "express";
+import express from "express";
 import { Server as SockerIOserver } from "socket.io";
 import * as http from "http";
 import * as fs from "fs";
@@ -25,7 +25,7 @@ const initializeServer = async () => {
 		utils.sendOpenSourcePage(req, res);
 	});
 
-	app.get("/", (req, res) => {
+	app.get("/", (_req, res) => {
 		res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 	});
 
@@ -73,7 +73,7 @@ const initializeServer = async () => {
 		socket.emit("initialize", `Hello #${socket.id}`);
 		socket.emit("onlineCount", onlineSessions.length);
 
-		socket.on("askPrediction", (incomingData) => {
+		socket.on("askPrediction", (incomingData: number[]) => {
 			if (typeof model === "undefined") {
 				loadModel();
 				socket.emit(
@@ -92,14 +92,12 @@ const initializeServer = async () => {
 				console.warn(`Malformed input -> ${JSON.stringify(incomingData)}`);
 				return;
 			}
-			const testData: Array<number> = incomingData;
-			if (testData.filter((val) => typeof val === "number").length !== 8) {
+			if (incomingData.filter((val) => typeof val === "number").length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
-				console.warn(`Malformed input -> ${JSON.stringify(testData)}`);
+				console.warn(`Malformed input -> ${JSON.stringify(incomingData)}`);
 				return;
 			}
-			const dataArray: Array<number> = testData;
-			const prediction: tf.Tensor = model.predict(tf.tensor([dataArray])) as tf.Tensor;
+			const prediction: tf.Tensor = model.predict(tf.tensor([incomingData])) as tf.Tensor;
 			/**
 			 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
 			 * in the prediction declaration is because the defined typed for model.predict output
@@ -116,7 +114,7 @@ const initializeServer = async () => {
 			});
 			socket.emit("predictionResult", maxValueIndex);
 			console.info(
-				`Sent prediction result as ${maxValueIndex} for prediction request ${JSON.stringify(dataArray)}.`
+				`Sent prediction result as ${maxValueIndex} for prediction request ${JSON.stringify(incomingData)}.`
 			);
 			return;
 		});
