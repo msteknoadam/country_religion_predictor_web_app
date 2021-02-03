@@ -98,13 +98,6 @@ const initializeServer = async () => {
 				return;
 			}
 			const prediction: tf.Tensor = model.predict(tf.tensor([incomingData])) as tf.Tensor;
-			/**
-			 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
-			 * in the prediction declaration is because the defined typed for model.predict output
-			 * is Tensor<Rank> and that limits my usage because I can't access Tensor functions
-			 * since I'm using TypeScript.), I need to write my own way to find the index of maximum
-			 * value in prediction list so I can get the prediction from religionDict array.
-			 */
 			let maxValueIndex = 0;
 			const predictionArray = prediction.dataSync();
 			predictionArray.forEach((value: number, index: number) => {
