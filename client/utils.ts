@@ -1,16 +1,16 @@
-export const setCookie = (cname: string, cvalue: string, exdays: number = 1) => {
-	var d = new Date();
+export const setCookie = (cname: string, cvalue: string, exdays = 1): void => {
+	const d = new Date();
 	d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
-	var expires = "expires=" + d.toUTCString();
+	const expires = "expires=" + d.toUTCString();
 	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 };
 
-export const getCookie = (cname: string) => {
-	var name = cname + "=";
-	var decodedCookie = decodeURIComponent(document.cookie);
-	var ca = decodedCookie.split(";");
-	for (var i = 0; i < ca.length; i++) {
-		var c = ca[i];
+export const getCookie = (cname: string): string => {
+	const name = cname + "=";
+	const decodedCookie = decodeURIComponent(document.cookie);
+	const ca = decodedCookie.split(";");
+	for (let i = 0; i < ca.length; i++) {
+		let c = ca[i];
 		while (c.charAt(0) == " ") {
 			c = c.substring(1);
 		}
@@ -21,7 +21,7 @@ export const getCookie = (cname: string) => {
 	return "";
 };
 
-export const error = (error: string) => {
+export const error = (error: string): void => {
 	let errorBox = document.createElement("div");
 	errorBox.style.zIndex = "1";
 	errorBox.style.width = "50%";
@@ -51,6 +51,6 @@ export const error = (error: string) => {
 	document.body.appendChild(errorBox);
 };
 
-export const setOnlineCount = (onlineCount: number) => {
+export const setOnlineCount = (onlineCount: number): void => {
 	(<HTMLSpanElement>document.querySelector(".onlineCount")).innerText = `${onlineCount}`;
 };

@@ -1,7 +1,7 @@
 import * as tf from "@tensorflow/tfjs-node";
 import * as path from "path";
 import * as express from "express";
-import * as socketio from "socket.io";
+import { Server as SockerIOserver } from "socket.io";
 import * as http from "http";
 import * as fs from "fs";
 import * as utils from "./utils";
@@ -10,8 +10,8 @@ const PORT = process.env.PORT || 3001;
 const initializeServer = async () => {
 	const app = express();
 	const server = http.createServer(app);
-	const io = socketio(server);
-	let onlineSessions: string[] = [];
+	const io = new SockerIOserver(server);
+	const onlineSessions: string[] = [];
 
 	setInterval(() => {
 		io.emit("onlineCount", onlineSessions.length);
@@ -92,15 +92,14 @@ const initializeServer = async () => {
 				console.warn(`Malformed input -> ${JSON.stringify(incomingData)}`);
 				return;
 			}
-			const testData: Array<any> = incomingData;
+			const testData: Array<number> = incomingData;
 			if (testData.filter((val) => typeof val === "number").length !== 8) {
 				socket.emit("clientError", "Error! Your input is not in a correct type. Please try again.");
 				console.warn(`Malformed input -> ${JSON.stringify(testData)}`);
 				return;
 			}
 			const dataArray: Array<number> = testData;
-			// @ts-ignore
-			const prediction: tf.Tensor = model.predict(tf.tensor([dataArray]));
+			const prediction: tf.Tensor = model.predict(tf.tensor([dataArray])) as tf.Tensor;
 			/**
 			 * Since tfjs-node is a bit problematic (for example, the reason I used ts-ignore
 			 * in the prediction declaration is because the defined typed for model.predict output
