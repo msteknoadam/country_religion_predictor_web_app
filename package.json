@@ -1,4 +1,6 @@
 {
+	"private": true,
+	"workspaces": ["client"],
 	"scripts": {
 		"dev:backend": "nodemon --ignore client/ --exec node_modules/.bin/ts-node -- ./backend/server.ts",
 		"dev:frontend": "webpack --config ./webpack.frontend.config.dev.ts --watch",
