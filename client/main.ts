@@ -3,7 +3,7 @@ import { religionDict } from "./constants";
 import * as utils from "./utils";
 
 const socket = io("//" + window.location.host, {
-	query: "session_id=" + utils.getCookie("USERDATA"),
+	query: { session_id: utils.getCookie("USERDATA") },
 });
 
 socket.on("initialize", (data: string) => {

@@ -11,10 +11,10 @@ const initializeServer = async () => {
 	const app = express();
 	const server = http.createServer(app);
 	const io = new SockerIOserver(server);
-	const onlineSessions: string[] = [];
+	const onlineSessions: Set<string> = new Set();
 
 	setInterval(() => {
-		io.emit("onlineCount", onlineSessions.length);
+		io.emit("onlineCount", onlineSessions.size);
 	}, 60e3);
 
 	app.get("*.ts", (req, res) => {
@@ -68,10 +68,10 @@ const initializeServer = async () => {
 	loadModel();
 
 	io.on("connection", (socket) => {
-		if (!onlineSessions.includes(socket.id)) onlineSessions.push(socket.id);
+		if (!onlineSessions.has(socket.id)) onlineSessions.add(socket.id);
 
 		socket.emit("initialize", `Hello #${socket.id}`);
-		socket.emit("onlineCount", onlineSessions.length);
+		socket.emit("onlineCount", onlineSessions.size);
 
 		socket.on("askPrediction", (incomingData: number[]) => {
 			if (typeof model === "undefined") {
@@ -113,7 +113,7 @@ const initializeServer = async () => {
 		});
 
 		socket.on("disconnect", () => {
-			delete onlineSessions[socket.id];
+			onlineSessions.delete(socket.id);
 		});
 	});
 };
